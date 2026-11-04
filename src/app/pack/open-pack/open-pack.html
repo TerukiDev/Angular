@@ -1,0 +1,161 @@
+<div class="page" [style.--glow]="glow()">
+  @if (loading()) {
+    <p class="loading">Loading the set…</p>
+  } @else if (error(); as message) {
+    <div class="alert" role="alert">
+      <p>{{ message }}</p>
+      <button class="secondary" (click)="onReload()">Try again</button>
+    </div>
+  } @else if (cards().length === 0) {
+    <div class="empty">
+      <h2>No cards in the set yet</h2>
+      <p>Add cards to the API before opening a pack.</p>
+    </div>
+  } @else {
+    @switch (pack.phase()) {
+      @case ('revealing') {
+        <div class="reveal">
+          <p class="counter" aria-hidden="true">{{ pack.index() + 1 }} / {{ pack.pulled().length }}</p>
+          <p class="sr-only" aria-live="polite">
+            Card {{ pack.index() + 1 }} of {{ pack.pulled().length }}: {{ pack.current()?.name }}
+          </p>
+
+          <button
+            type="button"
+            class="stack"
+            [attr.aria-label]="'Next card. Current card: ' + pack.current()?.name"
+            (click)="advance()"
+          >
+            @for (item of stack(); track item.key; let i = $index) {
+              <span
+                class="slot"
+                [style.z-index]="3 - i"
+                [style.--depth]="i"
+                [class.leaving]="i === 0 && leaving()"
+                (animationend)="i === 0 && $event.target === $event.currentTarget && onCardLeft()"
+              >
+                <img class="face" [src]="item.card.imageUrl" [alt]="i === 0 ? item.card.name : ''" />
+              </span>
+            }
+          </button>
+
+          @if (pack.current(); as card) {
+            <div class="caption">
+              <p class="no">{{ card.id | setNumber }}</p>
+              <p class="card-name">{{ card.name }}</p>
+              <p class="card-meta">
+                <span [class.rare]="card.rarity === 'Rare'">{{ raritySymbols[card.rarity] }} {{ card.rarity }}</span>
+                @if (pack.newIds().has(card.id)) {
+                  <span class="new">New</span>
+                }
+              </p>
+            </div>
+          }
+
+          <div class="reveal-foot">
+            <span>Click the card for the next one.</span>
+            <button type="button" class="ghost" (click)="pack.showAll()">Show all</button>
+          </div>
+        </div>
+      }
+
+      @case ('done') {
+        <div class="done-head">
+          <div>
+            <h2>Your booster</h2>
+            <p>
+              {{
+                pack.newIds().size === 0
+                  ? 'Nothing new this time.'
+                  : pack.newIds().size + (pack.newIds().size === 1 ? ' new card' : ' new cards') + ' for your collection.'
+              }}
+            </p>
+          </div>
+          <div class="actions">
+            <a routerLink="/collection" class="button ghost">View collection</a>
+            <button type="button" class="primary" (click)="pack.reset()">Open another</button>
+          </div>
+        </div>
+
+        <ol class="results">
+          @for (card of pack.pulled(); track $index) {
+            <li>
+              <a [routerLink]="['/cards', card.id]" class="result">
+                <img [src]="card.imageUrl" [alt]="card.name" />
+              </a>
+              <p class="label">
+                <span class="no">{{ card.id | setNumber }}</span>
+                <span class="label-name">{{ card.name }}</span>
+                @if (pack.newIds().has(card.id)) {
+                  <span class="new">New</span>
+                }
+              </p>
+            </li>
+          }
+        </ol>
+      }
+
+      @default {
+        <div class="sealed">
+          <div class="intro">
+            <h2 class="set-title">Base Set</h2>
+            <p class="lede">One booster, eleven cards drawn from the {{ total() }} of the set.</p>
+
+            <table class="contents">
+              <caption class="sr-only">What's inside</caption>
+              <tbody>
+                <tr>
+                  <th scope="row"><span aria-hidden="true">●</span> Common</th>
+                  <td>7</td>
+                </tr>
+                <tr>
+                  <th scope="row"><span aria-hidden="true">◆</span> Uncommon</th>
+                  <td>3</td>
+                </tr>
+                <tr class="rare">
+                  <th scope="row"><span aria-hidden="true">★</span> Rare</th>
+                  <td>1</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <p class="hint" aria-live="polite">
+              {{ pack.phase() === 'opening' ? 'Opening…' : 'Click the booster to open it.' }}
+            </p>
+
+            @if (pack.error(); as message) {
+              <p class="alert" role="alert">{{ message }}</p>
+            }
+
+            <a routerLink="/collection" class="progress">
+              <span><strong>{{ collected() }}</strong> / {{ total() }} in your collection</span>
+              <span class="bar"><span [style.width.%]="(collected() / total()) * 100"></span></span>
+            </a>
+          </div>
+
+          <button
+            type="button"
+            class="pack"
+            [class.opening]="pack.phase() === 'opening'"
+            [disabled]="pack.phase() === 'opening'"
+            aria-label="Open the booster"
+            (click)="pack.open()"
+          >
+            <span class="crimp top"></span>
+            <span class="pack-body" (animationend)="pack.tearDone()">
+              <span class="pack-brand">Pokémon Trading Card Game</span>
+              <span class="pack-set">Base Set</span>
+              <img
+                class="pack-art"
+                src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png"
+                alt=""
+              />
+              <span class="pack-count">11 cards</span>
+            </span>
+            <span class="crimp bottom"></span>
+          </button>
+        </div>
+      }
+    }
+  }
+</div>

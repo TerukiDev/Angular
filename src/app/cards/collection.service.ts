@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
+import { concatMap, from, Observable, tap, toArray } from 'rxjs';
 import { CollectionEntry } from '../card/card';
 
 @Injectable({
@@ -55,5 +56,27 @@ export class CollectionService {
         this.loadingSignal.set(false);
       },
     });
+  }
+
+  addCards(ids: number[]): Observable<CollectionEntry[]> {
+    return from(ids).pipe(
+      concatMap((id) => this.setCount(id, (this.counts().get(id) ?? 0) + 1)),
+      toArray(),
+    );
+  }
+
+  setCount(id: number, count: number): Observable<CollectionEntry> {
+    const exists = this.entriesSignal().some((entry) => entry.id === id);
+    const request = exists
+      ? this.http.patch<CollectionEntry>(`${this.apiUrl}/${id}`, { count })
+      : this.http.post<CollectionEntry>(this.apiUrl, { id, count });
+
+    return request.pipe(
+      tap((saved) =>
+        this.entriesSignal.update((entries) =>
+          exists ? entries.map((entry) => (entry.id === id ? saved : entry)) : [...entries, saved],
+        ),
+      ),
+    );
   }
 }

@@ -26,6 +26,24 @@
   --fairy: #df679f;
   --dragon: #a8892a;
   --colorless: #cfccc2;
+
+  --card-radius: 4.5% / 3.2%;
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@property --glow {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 html {

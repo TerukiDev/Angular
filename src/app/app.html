@@ -1,6 +1,7 @@
 <header>
   <a routerLink="/" class="brand"><h1>Packemon</h1></a>
   <nav aria-label="Main">
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Open a pack</a>
     <a routerLink="/collection" routerLinkActive="active">Collection</a>
   </nav>
 </header>
