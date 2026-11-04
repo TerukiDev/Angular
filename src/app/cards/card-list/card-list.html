@@ -1,0 +1,19 @@
+@if (loading()) {
+  <p class="loading">Loading your collection…</p>
+} @else if (error(); as message) {
+  <div class="alert" role="alert">
+    <p>{{ message }}</p>
+    <button class="secondary" (click)="onReload()">Try again</button>
+  </div>
+} @else {
+  <h2>Collection <span>({{ count() }})</span></h2>
+
+  <ol class="grid">
+    @for (card of cards(); track card.id) {
+      <li>
+        <img [src]="card.imageUrl" [alt]="card.name" loading="lazy" />
+        <p><span class="no">{{ card.id | setNumber }}</span> {{ card.name }}</p>
+      </li>
+    }
+  </ol>
+}

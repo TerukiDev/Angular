@@ -1,1 +1,29 @@
-/* You can add global styles to this file, and also import other style files */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  list-style: none;
+}
+
+:root {
+  --bg: #121212;
+  --surface: #1b1b1b;
+  --surface-2: #262626;
+  --line: #333;
+  --ink: #ececea;
+  --muted: #9a9a95;
+  --faint: #66665f;
+  --red: red;
+
+  --grass: green;
+  --fire: #e2522f;
+  --water: #2f7fd0;
+  --lightning: gold;
+  --psychic: #9653bb;
+  --fighting: #a95c2f;
+  --darkness: #34444f;
+  --metal: #9aa3ad;
+  --fairy: #df679f;
+  --dragon: #a8892a;
+  --colorless: #cfccc2;
+}
