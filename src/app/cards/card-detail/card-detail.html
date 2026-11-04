@@ -11,6 +11,11 @@
     <article>
       <p class="no">{{ card.id | setNumber }} / 102</p>
       <h2>{{ card.name }}</h2>
+      @if (owned()) {
+        <p class="owned">In your collection ×{{ owned() }}</p>
+      } @else {
+        <p class="owned missing">Not in your collection yet</p>
+      }
       <p>{{ card.category === 'Pokemon' ? card.stage + ' Pokémon' : card.category + ' card' }}</p>
 
       <dl>

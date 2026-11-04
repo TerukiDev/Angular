@@ -44,3 +44,8 @@ export const RARITY_SYMBOLS: Record<Rarity, string> = {
   Uncommon: '◆',
   Rare: '★',
 };
+
+export interface CollectionEntry {
+  id: number;
+  count: number;
+}

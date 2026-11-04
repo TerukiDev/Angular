@@ -6,16 +6,109 @@
     <button class="secondary" (click)="onReload()">Try again</button>
   </div>
 } @else {
-  <h2>Collection <span>({{ count() }})</span></h2>
+  <h2>Collection <span>{{ ownedCount() }}/{{ count() }}</span></h2>
 
-  <ol class="grid">
-    @for (card of cards(); track card.id) {
-      <li>
-        <a [routerLink]="['/cards', card.id]">
-          <img [src]="card.imageUrl" [alt]="card.name" loading="lazy" />
-          <p><span class="no">{{ card.id | setNumber }}</span> {{ card.name }}</p>
-        </a>
-      </li>
-    }
-  </ol>
+  <div
+    class="progress"
+    role="progressbar"
+    aria-label="Collection progress"
+    [attr.aria-valuenow]="progress()"
+    aria-valuemin="0"
+    aria-valuemax="100"
+  >
+    <div class="progress-bar" [style.width.%]="progress()"></div>
+  </div>
+
+  <div class="filters">
+    <input
+      type="search"
+      class="search"
+      placeholder="Search by name or number…"
+      aria-label="Search by name or number"
+      [value]="search()"
+      (input)="onSearch($event)"
+    />
+    <app-filter label="Show" [options]="ownershipOptions" [(selected)]="owned" />
+    <app-filter label="Rarity" [options]="rarities" [symbols]="raritySymbols" [(selected)]="rarity" />
+    <app-filter label="Category" [options]="categories" [(selected)]="category" />
+    <app-filter label="Type" [options]="types()" [(selected)]="type" />
+  </div>
+
+  <div class="toolbar">
+    <p class="results" aria-live="polite">
+      {{ filteredCards().length }} {{ filteredCards().length === 1 ? 'card' : 'cards' }}
+      @if (hasFilters()) {
+        <button type="button" class="link" (click)="clearFilters()">Clear filters</button>
+      }
+    </p>
+
+    <div class="view-toggle" role="group" aria-label="View">
+      <button type="button" [class.active]="view() === 'grid'" [attr.aria-pressed]="view() === 'grid'" (click)="view.set('grid')">
+        Grid
+      </button>
+      <button type="button" [class.active]="view() === 'list'" [attr.aria-pressed]="view() === 'list'" (click)="view.set('list')">
+        List
+      </button>
+    </div>
+  </div>
+
+  @if (filteredCards().length === 0) {
+    <div class="empty">
+      <h3>No card matches these filters</h3>
+      <p>Try another search or remove a filter.</p>
+      <button type="button" class="secondary" (click)="clearFilters()">Clear filters</button>
+    </div>
+  } @else if (view() === 'grid') {
+    <ol class="grid">
+      @for (card of filteredCards(); track card.id) {
+        <li>
+          <a [routerLink]="['/cards', card.id]">
+            @if (counts().get(card.id)) {
+              <img [src]="card.imageUrl" [alt]="card.name" loading="lazy" />
+              <p><span class="no">{{ card.id | setNumber }}</span> {{ card.name }}</p>
+            } @else {
+              <div class="slot" aria-hidden="true">{{ card.id | setNumber }}</div>
+              <p class="missing">
+                <span class="no">{{ card.id | setNumber }}</span> {{ card.name }}
+                <span class="visually-hidden">(not owned)</span>
+              </p>
+            }
+          </a>
+        </li>
+      }
+    </ol>
+  } @else {
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">No.</th>
+            <th scope="col">Name</th>
+            <th scope="col">Category</th>
+            <th scope="col">Type</th>
+            <th scope="col">Rarity</th>
+            <th scope="col" class="num">Owned</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (card of filteredCards(); track card.id) {
+            <tr [class.missing]="!counts().get(card.id)">
+              <td class="no">{{ card.id | setNumber }}</td>
+              <td><a [routerLink]="['/cards', card.id]">{{ card.name }}</a></td>
+              <td>{{ card.category }}</td>
+              <td>
+                @if (card.type) {
+                  <span class="type"><app-energy [type]="card.type" /> {{ card.type }}</span>
+                } @else {
+                  —
+                }
+              </td>
+              <td>{{ raritySymbols[card.rarity] }} {{ card.rarity }}</td>
+              <td class="num">{{ counts().get(card.id) ?? 0 }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
 }

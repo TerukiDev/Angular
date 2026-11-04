@@ -1,0 +1,24 @@
+<div class="filter" role="group" [attr.aria-label]="label()">
+  <span class="label" aria-hidden="true">{{ label() }}</span>
+  <button
+    type="button"
+    [class.active]="selected() === null"
+    [attr.aria-pressed]="selected() === null"
+    (click)="select(null)"
+  >
+    All
+  </button>
+  @for (option of options(); track option) {
+    <button
+      type="button"
+      [class.active]="selected() === option"
+      [attr.aria-pressed]="selected() === option"
+      (click)="select(option)"
+    >
+      @if (symbols()[option]; as symbol) {
+        {{ symbol }}
+      }
+      {{ option }}
+    </button>
+  }
+</div>
