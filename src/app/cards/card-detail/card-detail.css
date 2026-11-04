@@ -9,8 +9,15 @@
   gap: 40px;
 }
 
-.detail img {
+.card-art {
+  align-self: start;
+  border-radius: var(--card-radius);
+}
+
+.card-art img {
+  display: block;
   width: 100%;
+  border-radius: var(--card-radius);
 }
 
 dl {

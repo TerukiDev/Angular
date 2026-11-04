@@ -5,10 +5,11 @@ import { CardService } from '../card.service';
 import { CollectionService } from '../collection.service';
 import { SetNumberPipe } from '../set-number.pipe';
 import { Energy } from '../energy/energy';
+import { Holo } from '../holo';
 
 @Component({
   selector: 'app-card-detail',
-  imports: [RouterLink, SetNumberPipe, Energy],
+  imports: [RouterLink, SetNumberPipe, Energy, Holo],
   templateUrl: './card-detail.html',
   styleUrl: './card-detail.css',
 })

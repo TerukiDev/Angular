@@ -22,7 +22,9 @@
 
           <button
             type="button"
+            appHolo
             class="stack"
+            [class.foil]="pack.current()?.rarity === 'Rare'"
             [attr.aria-label]="'Next card. Current card: ' + pack.current()?.name"
             (click)="advance()"
           >
@@ -80,7 +82,12 @@
         <ol class="results">
           @for (card of pack.pulled(); track $index) {
             <li>
-              <a [routerLink]="['/cards', card.id]" class="result">
+              <a
+                appHolo
+                [routerLink]="['/cards', card.id]"
+                class="result"
+                [class.foil]="card.rarity === 'Rare'"
+              >
                 <img [src]="card.imageUrl" [alt]="card.name" />
               </a>
               <p class="label">

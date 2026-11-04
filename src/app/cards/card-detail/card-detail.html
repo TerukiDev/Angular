@@ -6,7 +6,9 @@
   <p class="alert" role="alert">{{ message }}</p>
 } @else if (card(); as card) {
   <div class="detail">
-    <img [src]="card.imageUrl" [alt]="card.name" />
+    <div appHolo class="card-art" [class.foil]="card.rarity === 'Rare'">
+      <img [src]="card.imageUrl" [alt]="card.name" />
+    </div>
 
     <article>
       <p class="no">{{ card.id | setNumber }} / {{ total() }}</p>

@@ -4,12 +4,13 @@ import { RARITY_SYMBOLS } from '../../card/card';
 import { CardService } from '../../cards/card.service';
 import { CollectionService } from '../../cards/collection.service';
 import { typeColor } from '../../cards/energy/energy';
+import { Holo } from '../../cards/holo';
 import { SetNumberPipe } from '../../cards/set-number.pipe';
 import { PackService } from '../pack.service';
 
 @Component({
   selector: 'app-open-pack',
-  imports: [RouterLink, SetNumberPipe],
+  imports: [RouterLink, SetNumberPipe, Holo],
   templateUrl: './open-pack.html',
   styleUrl: './open-pack.css',
 })
