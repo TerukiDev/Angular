@@ -1,0 +1,201 @@
+.back {
+  display: inline-block;
+  margin-bottom: 24px;
+}
+
+h2 {
+  margin-bottom: 24px;
+}
+
+form {
+  display: grid;
+  gap: 24px;
+  max-width: 720px;
+}
+
+fieldset {
+  display: grid;
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+legend {
+  padding: 0 8px;
+  font-weight: 700;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.row .field {
+  flex: 1 1 160px;
+}
+
+.row .grow {
+  flex: 2 1 260px;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+}
+
+label,
+.label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.optional {
+  font-weight: normal;
+  color: var(--faint);
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 8px 10px;
+  font: inherit;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+
+textarea {
+  resize: vertical;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid var(--ink);
+  outline-offset: 1px;
+}
+
+input.ng-invalid.ng-touched,
+textarea.ng-invalid.ng-touched {
+  border-color: var(--red);
+}
+
+.error {
+  font-size: 0.85rem;
+  color: var(--danger);
+}
+
+.attack {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  background: var(--surface);
+  border-radius: 8px;
+}
+
+.cost,
+.picker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  min-height: 32px;
+}
+
+.picker {
+  padding-top: 8px;
+  border-top: 1px dashed var(--line);
+}
+
+.energy {
+  display: inline-flex;
+  padding: 4px;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.energy:hover:not(:disabled) {
+  border-color: var(--ink);
+}
+
+.energy:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.free {
+  color: var(--faint);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.primary,
+.ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 0 20px;
+  font: inherit;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.primary {
+  color: #fff;
+  background: var(--red);
+  border: none;
+}
+
+.primary:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.ghost {
+  justify-self: start;
+  color: var(--ink);
+  background: none;
+  border: 1px solid var(--line);
+}
+
+.ghost:hover {
+  border-color: var(--ink);
+}
+
+.link {
+  justify-self: start;
+  padding: 0;
+  font: inherit;
+  text-decoration: underline;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.danger {
+  color: var(--danger);
+}
+
+.empty {
+  display: grid;
+  gap: 8px;
+  color: var(--muted);
+}
+
+.empty h2 {
+  margin: 0;
+  color: var(--ink);
+}

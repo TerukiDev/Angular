@@ -9,14 +9,47 @@
     <img [src]="card.imageUrl" [alt]="card.name" />
 
     <article>
-      <p class="no">{{ card.id | setNumber }} / 102</p>
+      <p class="no">{{ card.id | setNumber }} / {{ total() }}</p>
       <h2>{{ card.name }}</h2>
       @if (owned()) {
-        <p class="owned">In your collection ×{{ owned() }}</p>
+        <p class="owned">
+          In your collection ×{{ owned() }}
+          <button type="button" class="link" [disabled]="busy()" (click)="removeOne()">Remove one copy</button>
+        </p>
       } @else {
         <p class="owned missing">Not in your collection yet</p>
       }
-      <p>{{ card.category === 'Pokemon' ? card.stage + ' Pokémon' : card.category + ' card' }}</p>
+      <p>
+        {{ card.category === 'Pokemon' ? card.stage + ' Pokémon' : card.category + ' card' }}
+      </p>
+
+      <div class="actions">
+        <a [routerLink]="['/cards', card.id, 'edit']" class="ghost">Edit card</a>
+        @if (!confirming()) {
+          <button type="button" class="ghost danger" (click)="confirming.set(true)">Delete card</button>
+        }
+      </div>
+
+      @if (confirming()) {
+        <div class="confirm" role="alert">
+          <p>
+            Delete {{ card.name }} from the set?
+            @if (owned()) {
+              Your {{ owned() }} {{ owned() === 1 ? 'copy' : 'copies' }} will be removed from your collection too.
+            }
+          </p>
+          <div class="actions">
+            <button type="button" class="danger-fill" [disabled]="busy()" (click)="deleteCard()">
+              {{ busy() ? 'Deleting…' : 'Yes, delete it' }}
+            </button>
+            <button type="button" class="ghost" [disabled]="busy()" (click)="confirming.set(false)">Cancel</button>
+          </div>
+        </div>
+      }
+
+      @if (actionError(); as message) {
+        <p class="alert" role="alert">{{ message }}</p>
+      }
 
       <dl>
         @if (card.type) {

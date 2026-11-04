@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { concatMap, from, Observable, tap, toArray } from 'rxjs';
+import { concatMap, from, Observable, of, tap, toArray } from 'rxjs';
 import { CollectionEntry } from '../card/card';
 
 @Injectable({
@@ -65,8 +65,21 @@ export class CollectionService {
     );
   }
 
+  removeOne(id: number): Observable<unknown> {
+    const count = this.counts().get(id) ?? 0;
+    return count > 1 ? this.setCount(id, count - 1) : this.forget(id);
+  }
+
+  forget(id: number): Observable<unknown> {
+    if (!this.counts().has(id)) return of(null);
+
+    return this.http
+      .delete(`${this.apiUrl}/${id}`)
+      .pipe(tap(() => this.entriesSignal.update((entries) => entries.filter((entry) => entry.id !== id))));
+  }
+
   setCount(id: number, count: number): Observable<CollectionEntry> {
-    const exists = this.entriesSignal().some((entry) => entry.id === id);
+    const exists = this.counts().has(id);
     const request = exists
       ? this.http.patch<CollectionEntry>(`${this.apiUrl}/${id}`, { count })
       : this.http.post<CollectionEntry>(this.apiUrl, { id, count });

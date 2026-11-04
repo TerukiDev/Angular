@@ -1,7 +1,6 @@
 import { Component, computed, input } from '@angular/core';
 import { PokemonType } from '../../card/card';
 
-// Element généré par IA
 const GLYPHS: Record<PokemonType, string> = {
   Grass: 'M19.5 4C11 4 5.5 8.6 5.5 15.4c0 1.4.3 2.6.9 3.7L4 21.5 5.2 22.7l2.4-2.4c1 .6 2.2.9 3.6.9 6.6 0 8.3-7.4 8.3-17.2z',
   Fire: 'M12.5 2s6 4.8 6 11a6.5 6.5 0 0 1-13 0c0-3.3 2.2-5.6 2.2-5.6s.2 3.3 2.3 3.3C10 6.5 12.5 2 12.5 2z',

@@ -1,0 +1,220 @@
+<a [routerLink]="backLink()" class="back">
+  ← {{ isEdit() ? 'Back to the card' : 'Back to collection' }}
+</a>
+
+@if (isEdit() && loading()) {
+  <p class="loading">Loading the card…</p>
+} @else if (isEdit() && !card()) {
+  <div class="empty">
+    <h2>This card isn't in the set</h2>
+    <p>It may have been deleted.</p>
+  </div>
+} @else {
+  <h2>{{ isEdit() ? 'Edit ' + card()?.name : 'New card' }}</h2>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+    <fieldset>
+      <legend>Card</legend>
+
+      <div class="field">
+        <label for="name">Name</label>
+        <input id="name" formControlName="name" autocomplete="off" />
+        @if (form.controls.name.invalid && form.controls.name.touched) {
+          <p class="error">
+            @if (form.controls.name.hasError('required')) {
+              The name is required.
+            } @else {
+              The name must be at least 2 characters long.
+            }
+          </p>
+        }
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="category">Category</label>
+          <select id="category" formControlName="category">
+            @for (category of categories; track category) {
+              <option [value]="category">{{ category }}</option>
+            }
+          </select>
+        </div>
+
+        @if (category() !== 'Trainer') {
+          <div class="field">
+            <label for="type">Type</label>
+            <select id="type" formControlName="type">
+              @for (type of types; track type) {
+                <option [value]="type">{{ type }}</option>
+              }
+            </select>
+          </div>
+        }
+
+        <div class="field">
+          <label for="rarity">Rarity</label>
+          <select id="rarity" formControlName="rarity">
+            @for (rarity of rarities; track rarity) {
+              <option [value]="rarity">{{ rarity }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="imageUrl">Image URL</label>
+        <input id="imageUrl" type="url" formControlName="imageUrl" placeholder="https://…" />
+        @if (form.controls.imageUrl.invalid && form.controls.imageUrl.touched) {
+          <p class="error">The image URL must start with http:// or https://.</p>
+        }
+      </div>
+
+      @if (category() !== 'Pokemon') {
+        <div class="field">
+          <label for="effect">Effect</label>
+          <textarea id="effect" formControlName="effect" rows="3"></textarea>
+        </div>
+      }
+    </fieldset>
+
+    @if (category() === 'Pokemon') {
+      <fieldset>
+        <legend>Pokémon</legend>
+
+        <div class="row">
+          <div class="field">
+            <label for="hp">HP</label>
+            <input id="hp" type="number" formControlName="hp" min="10" step="10" />
+            @if (form.controls.hp.invalid && form.controls.hp.touched) {
+              <p class="error">
+                @if (form.controls.hp.hasError('required')) {
+                  HP are required.
+                } @else {
+                  HP must be at least 10.
+                }
+              </p>
+            }
+          </div>
+
+          <div class="field">
+            <label for="stage">Stage</label>
+            <select id="stage" formControlName="stage">
+              @for (stage of stages; track stage) {
+                <option [value]="stage">{{ stage }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="weakness">Weakness</label>
+            <select id="weakness" formControlName="weakness">
+              <option value="">None</option>
+              @for (type of types; track type) {
+                <option [value]="type">{{ type }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="resistance">Resistance</label>
+            <select id="resistance" formControlName="resistance">
+              <option value="">None</option>
+              @for (type of types; track type) {
+                <option [value]="type">{{ type }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="retreat">Retreat cost</label>
+            <input id="retreat" type="number" formControlName="retreat" min="0" max="4" />
+            @if (form.controls.retreat.invalid && form.controls.retreat.touched) {
+              <p class="error">The retreat cost must be between 0 and 4.</p>
+            }
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="abilityName">Pokémon Power <span class="optional">(optional)</span></label>
+            <input id="abilityName" formControlName="abilityName" autocomplete="off" />
+          </div>
+          <div class="field grow">
+            <label for="abilityEffect">Power effect</label>
+            <input id="abilityEffect" formControlName="abilityEffect" />
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset formArrayName="attacks">
+        <legend>Attacks</legend>
+
+        @for (attack of attacks.controls; track attack; let i = $index) {
+          <div class="attack" [formGroupName]="i">
+            <div class="row">
+              <div class="field grow">
+                <label [for]="'attack-name-' + i">Name</label>
+                <input [id]="'attack-name-' + i" formControlName="name" autocomplete="off" />
+                @if (attack.controls.name.invalid && attack.controls.name.touched) {
+                  <p class="error">The attack needs a name.</p>
+                }
+              </div>
+              <div class="field">
+                <label [for]="'attack-damage-' + i">Damage</label>
+                <input [id]="'attack-damage-' + i" formControlName="damage" placeholder="30+" />
+              </div>
+            </div>
+
+            <div class="field">
+              <span class="label">Cost</span>
+              <div class="cost">
+                @for (type of attack.controls.cost.value; track $index; let position = $index) {
+                  <button type="button" class="energy" [attr.aria-label]="'Remove ' + type" (click)="removeCost(i, position)">
+                    <app-energy [type]="type" />
+                  </button>
+                } @empty {
+                  <span class="free">Free</span>
+                }
+              </div>
+              <div class="picker" role="group" aria-label="Add an energy to the cost">
+                @for (type of types; track type) {
+                  <button
+                    type="button"
+                    class="energy"
+                    [attr.aria-label]="'Add ' + type"
+                    [disabled]="attack.controls.cost.value.length >= maxCost"
+                    (click)="addCost(i, type)"
+                  >
+                    <app-energy [type]="type" />
+                  </button>
+                }
+              </div>
+            </div>
+
+            <div class="field">
+              <label [for]="'attack-effect-' + i">Effect</label>
+              <textarea [id]="'attack-effect-' + i" formControlName="effect" rows="2"></textarea>
+            </div>
+
+            <button type="button" class="link danger" (click)="attacks.removeAt(i)">Remove this attack</button>
+          </div>
+        }
+
+        <button type="button" class="ghost" (click)="addAttack()">+ Add an attack</button>
+      </fieldset>
+    }
+
+    @if (submitError(); as message) {
+      <p class="alert" role="alert">{{ message }}</p>
+    }
+
+    <div class="actions">
+      <button type="submit" class="primary" [disabled]="saving()">
+        {{ saving() ? 'Saving…' : isEdit() ? 'Save changes' : 'Add to the set' }}
+      </button>
+      <a [routerLink]="backLink()" class="ghost">Cancel</a>
+    </div>
+  </form>
+}

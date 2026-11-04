@@ -6,7 +6,10 @@
     <button class="secondary" (click)="onReload()">Try again</button>
   </div>
 } @else {
-  <h2>Collection <span>{{ ownedCount() }}/{{ count() }}</span></h2>
+  <div class="heading">
+    <h2>Collection <span>{{ ownedCount() }}/{{ count() }}</span></h2>
+    <a routerLink="/cards/new" class="new-card">+ New card</a>
+  </div>
 
   <div
     class="progress"
