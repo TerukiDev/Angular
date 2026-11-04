@@ -27,3 +27,24 @@
   --dragon: #a8892a;
   --colorless: #cfccc2;
 }
+
+html {
+  background: var(--bg);
+}
+
+body {
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+a {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.no {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}

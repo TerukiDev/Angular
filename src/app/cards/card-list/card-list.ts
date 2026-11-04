@@ -1,10 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { CardService } from '../card.service';
 import { SetNumberPipe } from '../set-number.pipe';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-card-list',
-  imports: [SetNumberPipe],
+  imports: [RouterLink, SetNumberPipe],
   templateUrl: './card-list.html',
   styleUrl: './card-list.css',
 })

@@ -11,8 +11,10 @@
   <ol class="grid">
     @for (card of cards(); track card.id) {
       <li>
-        <img [src]="card.imageUrl" [alt]="card.name" loading="lazy" />
-        <p><span class="no">{{ card.id | setNumber }}</span> {{ card.name }}</p>
+        <a [routerLink]="['/cards', card.id]">
+          <img [src]="card.imageUrl" [alt]="card.name" loading="lazy" />
+          <p><span class="no">{{ card.id | setNumber }}</span> {{ card.name }}</p>
+        </a>
       </li>
     }
   </ol>

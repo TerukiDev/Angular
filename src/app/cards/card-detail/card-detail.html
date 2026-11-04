@@ -1,0 +1,83 @@
+<a routerLink="/collection" class="back">← Back to collection</a>
+
+@if (loading()) {
+  <p class="loading">Loading the card…</p>
+} @else if (error(); as message) {
+  <p class="alert" role="alert">{{ message }}</p>
+} @else if (card(); as card) {
+  <div class="detail">
+    <img [src]="card.imageUrl" [alt]="card.name" />
+
+    <article>
+      <p class="no">{{ card.id | setNumber }} / 102</p>
+      <h2>{{ card.name }}</h2>
+      <p>{{ card.category === 'Pokemon' ? card.stage + ' Pokémon' : card.category + ' card' }}</p>
+
+      <dl>
+        @if (card.type) {
+          <dt>Type</dt>
+          <dd><app-energy [type]="card.type" /> {{ card.type }}</dd>
+        }
+        @if (card.category === 'Pokemon') {
+          <dt>HP</dt>
+          <dd>{{ card.hp }}</dd>
+          <dt>Weakness</dt>
+          <dd>
+            @if (card.weakness) {
+              <app-energy [type]="card.weakness" /> {{ card.weakness }}
+            } @else {
+              None
+            }
+          </dd>
+          <dt>Resistance</dt>
+          <dd>
+            @if (card.resistance) {
+              <app-energy [type]="card.resistance" /> {{ card.resistance }}
+            } @else {
+              None
+            }
+          </dd>
+          <dt>Retreat</dt>
+          <dd>
+            @for (n of range(card.retreat); track $index) {
+              <app-energy type="Colorless" />
+            } @empty {
+              Free
+            }
+          </dd>
+        }
+        <dt>Rarity</dt><dd>{{ raritySymbols[card.rarity] }} {{ card.rarity }}</dd>
+      </dl>
+
+      @if (card.ability; as ability) {
+        <section>
+          <h3>Pokémon Power: {{ ability.name }}</h3>
+          <p>{{ ability.effect }}</p>
+        </section>
+      }
+
+      @for (attack of card.attacks; track attack.name) {
+        <section>
+          <h3>{{ attack.name }} @if (attack.damage) { — {{ attack.damage }} }</h3>
+          <p class="cost">
+            @for (type of attack.cost; track $index) {
+              <app-energy [type]="type" />
+            } @empty {
+              Free
+            }
+          </p>
+          @if (attack.effect) { <p>{{ attack.effect }}</p> }
+        </section>
+      }
+
+      @if (card.effect) {
+        <p>{{ card.effect }}</p>
+      }
+    </article>
+  </div>
+} @else {
+  <div class="empty">
+    <h2>This card isn't in the set</h2>
+    <p>It may have been deleted.</p>
+  </div>
+}
